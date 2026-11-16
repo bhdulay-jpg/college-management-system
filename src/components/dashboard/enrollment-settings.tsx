@@ -12,6 +12,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db, auth } from "../../lib/firebase";
 import { toast } from "sonner@2.0.3";
 import { LoadingState } from "../loading-state";
+import { getEnrollmentPeriodStatus } from "../../lib/enrollment-period";
 
 interface EnrollmentPeriod {
   startDate: string;
@@ -122,13 +123,10 @@ export function EnrollmentSettings() {
       return { text: "Not Configured", color: "text-gray-600", variant: "secondary" as const };
     }
 
-    const now = new Date();
-    const startDateTime = new Date(`${enrollmentPeriod.startDate}T${enrollmentPeriod.startTime || "00:00"}`);
-    const endDateTime = new Date(`${enrollmentPeriod.endDate}T${enrollmentPeriod.endTime || "23:59"}`);
-
-    if (now < startDateTime) {
+    const status = getEnrollmentPeriodStatus(enrollmentPeriod);
+    if (status === "upcoming") {
       return { text: "Upcoming", color: "text-blue-600", variant: "default" as const };
-    } else if (now > endDateTime) {
+    } else if (status === "closed") {
       return { text: "Closed", color: "text-red-600", variant: "destructive" as const };
     } else {
       return { text: "Active", color: "text-green-600", variant: "default" as const };

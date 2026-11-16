@@ -45,6 +45,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { motion, AnimatePresence } from "motion/react";
 import { StudentPageHeader } from "../../student-page-header";
+import { getEnrollmentPeriodStatus } from "../../../lib/enrollment-period";
 
 interface Schedule {
   id: string;
@@ -159,11 +160,7 @@ export function SubjectEnrollment() {
         if (docSnap.exists()) {
           const data = docSnap.data() as EnrollmentPeriod;
           setEnrollmentPeriod(data);
-
-          const now = new Date();
-          const start = new Date(data.startDate);
-          const end = new Date(data.endDate);
-          setIsEnrollmentOpen(data.isActive && now >= start && now <= end);
+          setIsEnrollmentOpen(getEnrollmentPeriodStatus(data) === "active");
         }
       } catch (error) {
         console.error("Error checking enrollment period:", error);
@@ -368,6 +365,20 @@ export function SubjectEnrollment() {
     return (schedule1.startTime < schedule2.endTime && schedule1.endTime > schedule2.startTime);
   };
 
+  const getConflictingSubjectCodes = (schedule: Schedule) => {
+    const conflictingSubjects = [
+      ...enrolledSchedules.filter(enrolled => hasTimeConflict(schedule, enrolled)),
+      ...pendingEnrollments.filter(pending =>
+        pending.id !== schedule.id && hasTimeConflict(schedule, pending)
+      ),
+    ];
+
+    return [...new Set(conflictingSubjects.map(conflict => conflict.subjectCode))];
+  };
+
+  const hasPendingScheduleConflicts = () =>
+    pendingEnrollments.some(schedule => getConflictingSubjectCodes(schedule).length > 0);
+
   const checkPrerequisites = async (subjectId: string): Promise<{ met: boolean; missing: string[] }> => {
     try {
       const subject = subjects.get(subjectId);
@@ -429,22 +440,9 @@ export function SubjectEnrollment() {
       reasons.push(`Prerequisites: ${prereqCheck.missing.join(", ")}`);
     }
 
-    const enrolledConflicts = enrolledSchedules.filter(es => 
-      hasTimeConflict(
-        { dayOfWeek: schedule.dayOfWeek, startTime: schedule.startTime, endTime: schedule.endTime },
-        { dayOfWeek: es.dayOfWeek, startTime: es.startTime, endTime: es.endTime }
-      )
-    );
-    
-    const pendingConflicts = pendingEnrollments.filter(pe => 
-      hasTimeConflict(
-        { dayOfWeek: schedule.dayOfWeek, startTime: schedule.startTime, endTime: schedule.endTime },
-        { dayOfWeek: pe.dayOfWeek, startTime: pe.startTime, endTime: pe.endTime }
-      )
-    );
-    
-    if (enrolledConflicts.length > 0 || pendingConflicts.length > 0) {
-      reasons.push("Schedule conflict detected");
+    const conflictingSubjectCodes = getConflictingSubjectCodes(schedule);
+    if (conflictingSubjectCodes.length > 0) {
+      warnings.push(`Schedule conflict with ${conflictingSubjectCodes.join(", ")}`);
     }
 
     const enrolledUnits = enrolledSchedules.reduce((sum, s) => sum + s.units, 0);
@@ -514,6 +512,11 @@ export function SubjectEnrollment() {
   const handleSaveEnrollments = async () => {
     if (!studentData) {
       toast.error("Student data not found");
+      return;
+    }
+
+    if (hasPendingScheduleConflicts()) {
+      toast.error("Resolve schedule conflicts before confirming enrollment");
       return;
     }
 
@@ -1135,6 +1138,8 @@ export function SubjectEnrollment() {
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {pendingEnrollments.map((schedule) => {
                   const subject = subjects.get(schedule.subjectId);
+                  const conflictingSubjectCodes = getConflictingSubjectCodes(schedule);
+
                   return (
                     <Card key={schedule.id} className="dark:bg-gray-800 dark:border-gray-700">
                       <CardContent className="p-4">
@@ -1151,6 +1156,14 @@ export function SubjectEnrollment() {
                             <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mt-1">
                               {subject?.units || 3} units
                             </div>
+                            {conflictingSubjectCodes.length > 0 && (
+                              <div className="mt-2 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                                <span>
+                                  Schedule conflict with {conflictingSubjectCodes.join(", ")}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           <Button
                             variant="ghost"
@@ -1178,7 +1191,7 @@ export function SubjectEnrollment() {
                 </Button>
                 <Button
                   onClick={handleSaveEnrollments}
-                  disabled={processing || pendingEnrollments.length === 0}
+                  disabled={processing || pendingEnrollments.length === 0 || hasPendingScheduleConflicts()}
                   className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
                 >
                   {processing ? (
