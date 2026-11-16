@@ -55,6 +55,7 @@ import { AnnouncementsPage as BusinessAnnouncementsPage } from "./components/das
 import { NotificationsPage } from "./components/dashboard/shared/notifications-page";
 import { Toaster } from "./components/ui/sonner";
 import { LoadingState } from "./components/loading-state";
+import { getFirebaseInitializationError, isFirebaseInitialized } from "./lib/firebase";
 
 function AppRoutes() {
   const { currentRoute, user, loading } = useRouter();
@@ -413,7 +414,27 @@ function AppRoutes() {
   );
 }
 
+function FirebaseConfigurationError() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background p-6">
+      <section role="alert" className="w-full max-w-xl space-y-3 rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+        <h1 className="text-xl font-semibold">Firebase configuration required</h1>
+        <p className="text-sm text-muted-foreground">
+          Add the required VITE_FIREBASE_* environment variables in Vercel Project Settings, then redeploy.
+        </p>
+        <pre className="whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+          {getFirebaseInitializationError() || "Firebase services could not be initialized."}
+        </pre>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
+  if (!isFirebaseInitialized()) {
+    return <FirebaseConfigurationError />;
+  }
+
   return (
     <RouterProvider>
       <AppRoutes />

@@ -7,7 +7,6 @@ import { ScrollAnimation } from "../scroll-animation";
 
 interface HeroSectionProps {
   onEnrollClick?: () => void;
-  onLoginClick?: () => void;
 }
 
 const platformAreas = [
@@ -17,7 +16,7 @@ const platformAreas = [
   { icon: Users, title: "Student services", detail: "Updates and support" },
 ];
 
-export function HeroSection({ onEnrollClick, onLoginClick }: HeroSectionProps) {
+export function HeroSection({ onEnrollClick }: HeroSectionProps) {
   return (
     <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-muted text-foreground dark:bg-background">
       <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
@@ -65,14 +64,6 @@ export function HeroSection({ onEnrollClick, onLoginClick }: HeroSectionProps) {
             >
               Apply for admission
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={onLoginClick}
-              className="h-14 min-w-[9rem] border-border bg-background/50 px-8 text-sm leading-none text-foreground hover:bg-background hover:text-foreground"
-            >
-              Portal sign in
             </Button>
           </motion.div>
 

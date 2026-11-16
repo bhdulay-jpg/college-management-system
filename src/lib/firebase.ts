@@ -62,7 +62,7 @@ if (typeof window !== 'undefined') {
   } catch (error) {
     firebaseInitializationError = error instanceof Error ? error.message : 'Unknown Firebase initialization error';
     console.error('Firebase initialization error:', firebaseInitializationError);
-    console.warn('Make sure to create a .env file with your Firebase credentials. See .env.example for reference.');
+    console.warn('Set the required VITE_FIREBASE_* variables in your local .env file or deployment environment.');
   }
 }
 

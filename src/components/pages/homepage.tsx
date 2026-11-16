@@ -16,16 +16,12 @@ export function Homepage() {
     navigate("enrollment");
   };
 
-  const handleLoginClick = () => {
-    navigate("login");
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-muted dark:bg-background">
       <PageHeader variant="public" />
       
       <main className="flex-1">
-        <HeroSection onEnrollClick={handleEnrollClick} onLoginClick={handleLoginClick} />
+        <HeroSection onEnrollClick={handleEnrollClick} />
         <FeaturesSection />
         <HowItWorks />
         <EnrollmentPreview onStartEnrollment={handleEnrollClick} />
