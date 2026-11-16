@@ -1,0 +1,509 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+  
+  /* Blue Bayoux Color Palette - Primary Design System */
+  --blue-bayoux-50: #f4f7f7;
+  --blue-bayoux-100: #e2e9eb;
+  --blue-bayoux-200: #c8d5d9;
+  --blue-bayoux-300: #a2b7be;
+  --blue-bayoux-400: #74909c;
+  --blue-bayoux-500: #597581;
+  --blue-bayoux-600: #4d636e;
+  --blue-bayoux-700: #42525c;
+  --blue-bayoux-800: #3c474e;
+  --blue-bayoux-900: #353e44;
+  --blue-bayoux-950: #20272c;
+  
+  /* Legacy gray mappings for backwards compatibility */
+  --gray-50: #f4f7f7;
+  --gray-100: #e2e9eb;
+  --gray-200: #c8d5d9;
+  --gray-300: #a2b7be;
+  --gray-400: #74909c;
+  --gray-500: #597581;
+  --gray-600: #4d636e;
+  --gray-700: #42525c;
+  --gray-800: #3c474e;
+  --gray-900: #353e44;
+  --gray-950: #20272c;
+  
+  /* Accent Colors - Complementary to Blue Bayoux */
+  --accent-primary: #597581;      /* Blue Bayoux 500 for primary actions */
+  --accent-success: #10B981;      /* Green for success states */
+  --accent-warning: #F59E0B;      /* Amber for warnings */
+  --accent-error: #EF4444;        /* Red for errors */
+  --accent-info: #74909c;         /* Blue Bayoux 400 for info */
+  
+  /* Semantic colors - Light Mode */
+  --background: #f4f7f7;          /* Blue Bayoux 50 */
+  --foreground: #20272c;          /* Blue Bayoux 950 */
+  --card: #ffffff;
+  --card-foreground: #20272c;     /* Blue Bayoux 950 */
+  --popover: #ffffff;
+  --popover-foreground: #20272c;  /* Blue Bayoux 950 */
+  --primary: #597581;             /* Blue Bayoux 500 */
+  --primary-foreground: #ffffff;
+  --secondary: #c8d5d9;           /* Blue Bayoux 200 */
+  --secondary-foreground: #20272c;/* Blue Bayoux 950 */
+  --muted: #e2e9eb;               /* Blue Bayoux 100 */
+  --muted-foreground: #3c474e;    /* Blue Bayoux 800 */
+  --accent: #597581;              /* Blue Bayoux 500 */
+  --accent-foreground: #ffffff;
+  --destructive: #EF4444;
+  --destructive-foreground: #ffffff;
+  --success: #10B981;
+  --success-foreground: #ffffff;
+  --warning: #F59E0B;
+  --warning-foreground: #ffffff;
+  --info: #74909c;                /* Blue Bayoux 400 */
+  --info-foreground: #ffffff;
+  --border: #a2b7be;              /* Blue Bayoux 300 - Better contrast */
+  --input: transparent;
+  --input-background: #ffffff;
+  --switch-background: #a2b7be;   /* Blue Bayoux 300 */
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #597581;                /* Blue Bayoux 500 */
+  
+  /* Chart colors */
+  --chart-1: #597581;             /* Blue Bayoux 500 */
+  --chart-2: #74909c;             /* Blue Bayoux 400 */
+  --chart-3: #10B981;             /* Green */
+  --chart-4: #F59E0B;             /* Amber */
+  --chart-5: #EF4444;             /* Red */
+  
+  --radius: 0.5rem;
+  
+  /* Sidebar colors - Light Mode */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #20272c;  /* Blue Bayoux 950 */
+  --sidebar-primary: #597581;     /* Blue Bayoux 500 */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f4f7f7;      /* Blue Bayoux 50 */
+  --sidebar-accent-foreground: #20272c;
+  --sidebar-border: #c8d5d9;      /* Blue Bayoux 200 */
+  --sidebar-ring: #597581;        /* Blue Bayoux 500 */
+  
+  /* Spacing system (4/8/16/24/32) */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  --spacing-3xl: 4rem;      /* 64px */
+  
+  /* Typography scale */
+  --text-xs: 0.75rem;       /* 12px */
+  --text-sm: 0.875rem;      /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg: 1.125rem;      /* 18px */
+  --text-xl: 1.25rem;       /* 20px */
+  --text-2xl: 1.75rem;      /* 28px */
+  --text-3xl: 2.25rem;      /* 36px */
+  --text-4xl: 3rem;         /* 48px */
+}
+
+.dark {
+  /* Semantic colors - Dark Mode */
+  --background: #20272c;          /* Blue Bayoux 950 */
+  --foreground: #e2e9eb;          /* Blue Bayoux 100 */
+  --card: #353e44;                /* Blue Bayoux 900 */
+  --card-foreground: #e2e9eb;     /* Blue Bayoux 100 */
+  --popover: #353e44;             /* Blue Bayoux 900 */
+  --popover-foreground: #e2e9eb;  /* Blue Bayoux 100 */
+  --primary: #74909c;             /* Blue Bayoux 400 - brighter for dark mode */
+  --primary-foreground: #ffffff;
+  --secondary: #3c474e;           /* Blue Bayoux 800 */
+  --secondary-foreground: #e2e9eb;/* Blue Bayoux 100 */
+  --muted: #3c474e;               /* Blue Bayoux 800 */
+  --muted-foreground: #a2b7be;    /* Blue Bayoux 300 */
+  --accent: #74909c;              /* Blue Bayoux 400 */
+  --accent-foreground: #ffffff;
+  --destructive: #F87171;
+  --destructive-foreground: #ffffff;
+  --success: #34D399;
+  --success-foreground: #ffffff;
+  --warning: #FBBF24;
+  --warning-foreground: #20272c;  /* Blue Bayoux 950 */
+  --info: #74909c;                /* Blue Bayoux 400 */
+  --info-foreground: #ffffff;
+  --border: #3c474e;              /* Blue Bayoux 800 */
+  --input: transparent;
+  --input-background: #3c474e;    /* Blue Bayoux 800 */
+  --switch-background: #42525c;   /* Blue Bayoux 700 */
+  --ring: #74909c;                /* Blue Bayoux 400 */
+  
+  /* Chart colors for dark mode */
+  --chart-1: #74909c;             /* Blue Bayoux 400 */
+  --chart-2: #a2b7be;             /* Blue Bayoux 300 */
+  --chart-3: #34D399;
+  --chart-4: #FBBF24;
+  --chart-5: #F87171;
+  
+  /* Sidebar colors - Dark Mode */
+  --sidebar: #353e44;             /* Blue Bayoux 900 */
+  --sidebar-foreground: #e2e9eb;  /* Blue Bayoux 100 */
+  --sidebar-primary: #74909c;     /* Blue Bayoux 400 */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #3c474e;      /* Blue Bayoux 800 */
+  --sidebar-accent-foreground: #e2e9eb;
+  --sidebar-border: #3c474e;      /* Blue Bayoux 800 */
+  --sidebar-ring: #74909c;        /* Blue Bayoux 400 */
+}
+
+@theme inline {
+  /* Blue Bayoux Color Scale */
+  --color-blue-bayoux-50: var(--blue-bayoux-50);
+  --color-blue-bayoux-100: var(--blue-bayoux-100);
+  --color-blue-bayoux-200: var(--blue-bayoux-200);
+  --color-blue-bayoux-300: var(--blue-bayoux-300);
+  --color-blue-bayoux-400: var(--blue-bayoux-400);
+  --color-blue-bayoux-500: var(--blue-bayoux-500);
+  --color-blue-bayoux-600: var(--blue-bayoux-600);
+  --color-blue-bayoux-700: var(--blue-bayoux-700);
+  --color-blue-bayoux-800: var(--blue-bayoux-800);
+  --color-blue-bayoux-900: var(--blue-bayoux-900);
+  --color-blue-bayoux-950: var(--blue-bayoux-950);
+  
+  /* Legacy gray mappings */
+  --color-gray-50: var(--blue-bayoux-50);
+  --color-gray-100: var(--blue-bayoux-100);
+  --color-gray-200: var(--blue-bayoux-200);
+  --color-gray-300: var(--blue-bayoux-300);
+  --color-gray-400: var(--blue-bayoux-400);
+  --color-gray-500: var(--blue-bayoux-500);
+  --color-gray-600: var(--blue-bayoux-600);
+  --color-gray-700: var(--blue-bayoux-700);
+  --color-gray-800: var(--blue-bayoux-800);
+  --color-gray-900: var(--blue-bayoux-900);
+  --color-gray-950: var(--blue-bayoux-950);
+  
+  /* Semantic color mappings */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Border radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Smooth transitions for all elements */
+  * {
+    @apply transition-colors duration-200;
+  }
+  
+  /* Smooth scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--muted);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--blue-bayoux-600);
+  }
+
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+/* Custom utility classes for design system */
+.bg-primary-gradient {
+  background: linear-gradient(135deg, #597581 0%, #74909c 100%);
+}
+
+/* Dark mode primary gradient */
+.dark .bg-primary-gradient {
+  background: linear-gradient(135deg, #74909c 0%, #a2b7be 100%);
+}
+
+.bg-success-gradient {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.bg-warning-gradient {
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+}
+
+.bg-error-gradient {
+  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+}
+
+.bg-info-gradient {
+  background: linear-gradient(135deg, #74909c 0%, #a2b7be 100%);
+}
+
+/* Dark mode info gradient */
+.dark .bg-info-gradient {
+  background: linear-gradient(135deg, #a2b7be 0%, #c8d5d9 100%);
+}
+
+/* Elevation system with dark mode support */
+.elevation-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.dark .elevation-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+}
+
+.elevation-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark .elevation-md {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+}
+
+.elevation-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.dark .elevation-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+}
+
+.elevation-xl {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.dark .elevation-xl {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+}
+
+/* Glass morphism effect - Updated for Blue Bayoux */
+.glass-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-light {
+  background: rgba(53, 62, 68, 0.7);    /* Blue Bayoux 900 with opacity */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(60, 71, 78, 0.3);  /* Blue Bayoux 800 with opacity */
+}
+
+/* Text utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Grid system utilities */
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-auto-fill {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+/* Animation utilities for page transitions and interactions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}

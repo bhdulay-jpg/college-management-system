@@ -1,0 +1,243 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Roles are stored in /users/{uid}. Create the initial Admin in the
+    // Firebase Console before deploying these rules.
+    function signedIn() { return request.auth != null; }
+    function profileExists() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function hasRole(role) {
+      return profileExists()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+    function isAdmin() { return hasRole('Admin'); }
+    function isRegistrar() { return hasRole('Registrar'); }
+    function isTeacher() { return hasRole('Teacher'); }
+    function isStudent() { return hasRole('Student'); }
+    function isBusinessOffice() { return hasRole('Business Office'); }
+    function isAcademicStaff() { return isAdmin() || isRegistrar(); }
+    function isTeachingStaff() { return isAcademicStaff() || isTeacher(); }
+    function isFinanceStaff() { return isAdmin() || isBusinessOffice(); }
+    function isStaff() {
+      return isAdmin() || isRegistrar() || isTeacher() || isBusinessOffice();
+    }
+    function isOwnProfile(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+    function keepsIdentity() {
+      return request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role;
+    }
+    function onlyUpdatesLastLogin() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastLogin']);
+    }
+    function isOwnStudentData(data) {
+      return isStudent() && data.keys().hasAny(['studentId'])
+        && data.studentId == request.auth.uid;
+    }
+    function isOwnEnrollment(data) {
+      return isStudent() && (
+        data.get('userId', '') == request.auth.uid
+        || (request.auth.token.email is string
+          && data.get('email', '') == request.auth.token.email)
+      );
+    }
+    function isEligibleForScheduleEnrollment() {
+      let student = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      let studentProgram = student.get('program', '');
+      let scheduleProgram = resource.data.get('program', '');
+      let studentSemester = student.get('semester', '');
+      let scheduleSemester = resource.data.get('semester', '');
+      return studentProgram is string
+        && scheduleProgram is string
+        && studentSemester is string
+        && scheduleSemester is string
+        && (studentProgram == scheduleProgram
+          || studentProgram.matches('^' + scheduleProgram + ' - .*$'))
+        && student.get('yearLevel', '') == resource.data.get('yearLevel', '')
+        && (studentSemester == scheduleSemester
+          || studentSemester.matches('^' + scheduleSemester + ' .*$'));
+    }
+    function canUpdateOwnScheduleEnrollment() {
+      let uid = request.auth.uid;
+      let currentRoster = resource.data.get('enrolledStudents', []);
+      let nextRoster = request.resource.data.get('enrolledStudents', []);
+      return isStudent()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['enrolledStudents'])
+        && currentRoster is list
+        && nextRoster is list
+        && (
+          (!currentRoster.hasAny([uid])
+            && nextRoster.hasAll(currentRoster)
+            && nextRoster.hasAny([uid])
+            && nextRoster.size() == currentRoster.size() + 1
+            && nextRoster.size() <= resource.data.get(
+              'maxStudents',
+              resource.data.get('roomCapacity', 0)
+            )
+            && isEligibleForScheduleEnrollment())
+          || (currentRoster.hasAny([uid])
+            && !nextRoster.hasAny([uid])
+            && currentRoster.hasAll(nextRoster)
+            && nextRoster.size() + 1 == currentRoster.size())
+          || nextRoster == currentRoster
+        );
+    }
+    // Several current screens make collection-wide client queries. Reads remain
+    // authenticated for compatibility; writes are role-gated below.
+    function canReadOperationalData() { return signedIn(); }
+
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create, delete: if isAdmin()
+        || (isRegistrar() && request.resource.data.role in ['Student', 'Parent']);
+      allow update: if isAdmin()
+        || (isRegistrar() && resource.data.role in ['Student', 'Parent'])
+        || (isOwnProfile(userId) && (keepsIdentity() || onlyUpdatesLastLogin()));
+    }
+
+    match /announcements/{id} {
+      allow read: if true;
+      allow create, update, delete: if isStaff();
+    }
+    // Applicants can submit before authentication. Review is staff-only.
+    match /enrollments/{id} {
+      allow create: if true;
+      allow read: if isAcademicStaff() || isBusinessOffice() || isOwnEnrollment(resource.data);
+      allow update: if isAcademicStaff() || isBusinessOffice();
+      allow delete: if isAdmin();
+    }
+    match /applications/{id} {
+      allow create: if true;
+      allow read, update: if isAcademicStaff();
+      allow delete: if isAdmin();
+    }
+
+    match /attendance/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isTeachingStaff();
+    }
+    match /grades/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isTeachingStaff();
+    }
+    match /payments/{id} {
+      allow read: if canReadOperationalData();
+      allow create: if isFinanceStaff() || isOwnStudentData(request.resource.data);
+      allow update, delete: if isFinanceStaff();
+    }
+    match /studentFinancials/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isFinanceStaff();
+    }
+    match /parentChildren/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+
+    match /courses/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /classes/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /curriculum/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /faculty/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /sections/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /academicYears/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /rooms/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /schedules/{id} {
+      allow read: if canReadOperationalData();
+      allow create, delete: if isAcademicStaff();
+      allow update: if isAcademicStaff() || canUpdateOwnScheduleEnrollment();
+    }
+    match /subjects/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /programs/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /departments/{id} {
+      allow read: if true;
+      allow create, update, delete: if isAcademicStaff();
+    }
+
+    match /settings/{id} {
+      allow read: if signedIn();
+      allow create, update, delete: if isAcademicStaff();
+    }
+    match /studentSubjects/{id} {
+      allow read: if canReadOperationalData();
+      allow create: if isAcademicStaff() || isOwnStudentData(request.resource.data);
+      allow update: if isAcademicStaff();
+      allow delete: if isAcademicStaff()
+        || (isOwnStudentData(resource.data) && resource.data.status == 'enrolled');
+    }
+    match /subjectEnrollments/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isAcademicStaff();
+    }
+
+    match /notifications/{id} {
+      allow read: if signedIn();
+      allow create: if isStaff();
+      allow update, delete: if isAdmin();
+    }
+    match /notificationReadStatus/{id} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if signedIn() && resource.data.userId == request.auth.uid;
+    }
+    match /activities/{id} {
+      allow read: if isAdmin();
+      allow create: if isStaff();
+      allow update, delete: if isAdmin();
+    }
+    match /enrollmentAuditLogs/{id} {
+      allow read, create: if isAcademicStaff();
+      allow update, delete: if false;
+    }
+
+    match /tuitionRates/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isFinanceStaff();
+    }
+    match /feeTemplates/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isFinanceStaff();
+    }
+    match /discountTemplates/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isFinanceStaff();
+    }
+    match /messages/{id} {
+      allow read: if canReadOperationalData();
+      allow create, update, delete: if isTeachingStaff();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
